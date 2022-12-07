@@ -19,6 +19,10 @@ export default {
 }
 .page-container {
   background-color: #fff;
+  height: 80vh;
+  width: 50%;
+  max-width: 900px;
+  min-width: 600px;
 }
 
 </style>
