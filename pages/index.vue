@@ -1,18 +1,24 @@
 <template>
   <section class="section">
     <b-input
+      v-model="searchInput"
       type="search"
       icon="magnify"
       class="mb-5 mx-2"
     />
-    <section class="scroll-area px-2">
-      <div v-for="(user, idx) in users()" :key="idx" class="user-card is-flex is-align-items-center">
+    <section ref="scrollArea" class="scroll-area px-2" @scroll="checkScroll">
+      <div v-for="(user, idx) in users" :key="idx" class="user-card is-flex is-align-items-center">
         <nuxt-img :src="user.avatar" loading="lazy" class="user-avatar" />
         <div class="right-side">
-          <div class="top-right ml-5">
+          <div class="top-right ml-5 is-flex is-justify-content-space-between is-align-items-flex-start">
             <h3 class="user-name mb-1">
               {{ user.name }}
             </h3>
+            <p class="mr-2">
+              {{ user.email }}
+            </p>
+          </div>
+          <div class="mid-right ml-5">
             <p class="user-title mb-1">
               {{ user.title }}
             </p>
@@ -21,7 +27,10 @@
             </p>
           </div>
           <div class="bottom-right mt-4">
-            <b-button class="button ml-5">
+            <b-button v-if="!selection().includes(user.name)" class="button ml-5" @click="selectUser(user.name)">
+              MARK AS SUITABLE
+            </b-button>
+            <b-button v-else class="button ml-5" @click="unselectUser(user.name)">
               SKIP SELECTION
             </b-button>
           </div>
@@ -38,10 +47,31 @@ export default {
   name: 'IndexPage',
   data () {
     return {
+      initialIdx: 0,
+      finalIdx: 9,
+      searchInput: ''
+    }
+  },
+  computed: {
+    users () {
+      return this.$store.getters.getUsers(this.initialIdx, this.finalIdx)
     }
   },
   methods: {
-    ...mapGetters({ users: 'getUsers' })
+    ...mapGetters({ selection: 'getSelection' }),
+
+    selectUser (userName) {
+      this.$store.commit('selectUser', userName)
+    },
+    unselectUser (userName) {
+      this.$store.commit('unselectUser', userName)
+    },
+    checkScroll () {
+      const el = this.$refs.scrollArea
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
+        this.finalIdx += 10
+      }
+    }
   }
 }
 </script>
