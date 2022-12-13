@@ -7,7 +7,13 @@ export const state = () => ({
 })
 
 export const getters = {
-  getUsers: state => (initial, last) => {
+  getUsers: state => (initial, last, searchInput) => {
+    if (searchInput) {
+      return state.users.filter((user) => {
+        return Object.values(user).map(str => str.toLowerCase()).some(value => value.includes(searchInput.toLowerCase()))
+      }).slice(initial, last)
+    }
+
     return state.users.slice(initial, last)
   },
   getSelection (state) {

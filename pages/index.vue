@@ -5,26 +5,19 @@
       type="search"
       icon="magnify"
       class="mb-5 mx-2"
+      @input="updateUrl()"
     />
     <section ref="scrollArea" class="scroll-area px-2" @scroll="checkScroll">
-      <div v-for="(user, idx) in users" :key="idx" class="user-card is-flex is-align-items-center">
+      <div v-for="(user, idx) in users" :key="idx" :class="classObject(user.name)">
         <nuxt-img :src="user.avatar" loading="lazy" class="user-avatar" />
         <div class="right-side">
           <div class="top-right ml-5 is-flex is-justify-content-space-between is-align-items-flex-start">
-            <h3 class="user-name mb-1">
-              {{ user.name }}
-            </h3>
-            <p class="mr-2">
-              {{ user.email }}
-            </p>
+            <h3 class="user-name mb-1" v-html="highlightText(user.name)" />
+            <p class="mr-2" v-html="highlightText(user.email)" />
           </div>
           <div class="mid-right ml-5">
-            <p class="user-title mb-1">
-              {{ user.title }}
-            </p>
-            <p class="user-address mb-1">
-              {{ `${user.address}, ${user.city}` }}
-            </p>
+            <p class="user-title mb-1" v-html="highlightText(user.title)"/>
+            <p class="user-address mb-1" v-html="highlightText(`${user.address}, ${user.city}`)"/>
           </div>
           <div class="bottom-right mt-4">
             <b-button v-if="!selection().includes(user.name)" class="button ml-5" @click="selectUser(user.name)">
@@ -54,8 +47,11 @@ export default {
   },
   computed: {
     users () {
-      return this.$store.getters.getUsers(this.initialIdx, this.finalIdx)
+      return this.$store.getters.getUsers(this.initialIdx, this.finalIdx, this.searchInput)
     }
+  },
+  created () {
+    this.searchInput = this.$route.query.search
   },
   methods: {
     ...mapGetters({ selection: 'getSelection' }),
@@ -71,6 +67,26 @@ export default {
       if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
         this.finalIdx += 10
       }
+    },
+    updateUrl () {
+      this.$router.push({
+        query: {
+          search: this.searchInput
+        }
+      })
+    },
+    highlightText (string) {
+      return this.searchInput
+        ? string.replace(new RegExp(this.searchInput, 'gi'), '<mark>$&</mark>')
+        : string
+    },
+    classObject (userName) {
+      return Object.assign({}, {
+        'user-card': true,
+        'is-flex': true,
+        'is-align-items-center': true,
+        'is-active': this.selection().includes(userName)
+      })
     }
   }
 }
@@ -78,7 +94,9 @@ export default {
 
 <style lang="scss" scoped>
   .user-card {
-    background: #e5e5e5;
+    background: #FAFAFA;
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.24);
+    border-radius: 3px;
     margin-bottom: 21px;
     min-height: 180px;
   }
@@ -125,25 +143,25 @@ export default {
     overflow: hidden;
     overflow-y: auto;
   }
-  /* width */
+
   ::-webkit-scrollbar {
     width: 4px;
   }
 
-/* Track */
   ::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.16);
     width: 1px;
   }
 
-  /* Handle */
   ::-webkit-scrollbar-thumb {
     background: #4D4D4D;
     border-radius: 2px;
   }
 
-  /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
     background: #555;
+  }
+  .is-active {
+    border: 1px solid #4765FF;
   }
 </style>
