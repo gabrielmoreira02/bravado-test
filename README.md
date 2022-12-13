@@ -37,3 +37,6 @@ sizes if needed.
 
 There are a few places where it was needed to use v-html for the page to work correctly. So, if this data is ever passed back to the API,
 we need to handle possible XSS attacks. Right now, as it will not be passed to any API, thats not a concern.
+
+We could better use components in an actual project, but for this small level of complexity, we used a very small amount. If it were to scale,
+we should componentize better.
