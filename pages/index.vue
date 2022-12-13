@@ -9,7 +9,7 @@
     />
     <section ref="scrollArea" class="scroll-area px-2" @scroll="checkScroll">
       <div v-for="(user, idx) in users" :key="idx" :class="classObject(user.name)">
-        <nuxt-img :src="user.avatar" loading="lazy" class="user-avatar" />
+        <img :src="user.avatar" loading="lazy" class="user-avatar">
         <div class="right-side">
           <div class="top-right ml-5 is-flex is-justify-content-space-between is-align-items-flex-start">
             <h3 class="user-name mb-1" v-html="highlightText(user.name)" />
