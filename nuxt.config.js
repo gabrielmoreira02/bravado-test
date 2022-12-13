@@ -64,5 +64,8 @@ export default {
     families: {
       Roboto: true
     }
+  },
+  image: {
+    domains: ['6397d26c1983411054a6dbc6--funny-entremet-4d7415.netlify.app']
   }
 }
